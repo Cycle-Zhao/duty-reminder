@@ -1,9 +1,9 @@
 name: Daily Duty Reminder
 on:
   schedule:
-    # GitHub 使用 UTC 时间，UTC 0:00 对应北京时间早上 8:00[reference:6]
+    # 每天 UTC 时间 0:00 运行 (北京时间早上 8:00)
     - cron: '0 0 * * *'
-  workflow_dispatch: # 允许你手动在网页上点击测试
+  workflow_dispatch: # 允许你手动点按钮测试
 
 jobs:
   build:
@@ -21,3 +21,5 @@ jobs:
         run: python duty.py
         env:
           PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          # 👇 就是漏了下面这一行！现在补上
+          PUSHPLUS_TOPIC: ${{ secrets.PUSHPLUS_TOPIC }}
