@@ -2,7 +2,6 @@ import datetime
 import requests
 import os
 
-# 必须同时有这两个
 PUSHPLUS_TOKEN = os.environ.get("PUSHPLUS_TOKEN")
 PUSHPLUS_TOPIC = os.environ.get("PUSHPLUS_TOPIC")
 
@@ -10,18 +9,14 @@ MEMBERS = ['谢江源', '陈锦慧', '俞天乐', '赵杰']
 START_DATE = datetime.date(2026, 10, 20)
 
 def check_and_send():
-    today = datetime.date.today() # 👈 这里换回真实的今天了
+    today = datetime.date.today() # 获取真实的今天（10月25日）
     days_diff = (today - START_DATE).days
     
-    if days_diff < 0:
-        return
-
-    is_bed_change = (days_diff % 2 == 0)
-    is_toilet_change = (days_diff % 7 == 0)
-
-    if not is_bed_change and not is_toilet_change:
-        print("今天没有轮换，不发送通知。")
-        return
+    # ==========================================
+    # 强行去掉轮换日判断，只要跑代码就发送！
+    is_bed_change = True
+    is_toilet_change = True
+    # ==========================================
 
     bed_index = (days_diff // 2) % 4
     toilet_index = (days_diff // 7) % 4
@@ -36,17 +31,16 @@ def check_and_send():
     if is_toilet_change:
         title += f"厕所-{toilet_person}"
 
-    content = f"今天是 {today}，迎来新一轮的值日交接啦！\n\n"
+    content = f"【测试消息】今天是 {today}，当前值日安排如下：\n\n"
     if is_bed_change:
-        content += f"🛏️ **寝室值日**：从今天起，接下来的 2 天由 **{bed_person}** 负责。\n"
+        content += f"🛏️ **寝室值日**：当前由 **{bed_person}** 负责。\n"
     if is_toilet_change:
-        content += f"🚽 **厕所值日**：从今天起，接下来的 7 天由 **{toilet_person}** 负责。\n"
-    content += "\n辛苦接班的同学啦，记得打扫卫生哦！"
+        content += f"🚽 **厕所值日**：当前由 **{toilet_person}** 负责。\n"
 
     url = "http://www.pushplus.plus/send"
     data = {
-        "token": PUSHPLUS_TOKEN, # 👈 修复报错：加上你的个人 token
-        "topic": PUSHPLUS_TOPIC, # 👈 加上群组编码，发给所有人
+        "token": PUSHPLUS_TOKEN, 
+        "topic": PUSHPLUS_TOPIC, 
         "title": title,
         "content": content,
         "template": "markdown"
@@ -59,4 +53,5 @@ def check_and_send():
         print("发送失败:", e)
 
 if __name__ == "__main__":
+    print("--- 开始强制执行 ---")
     check_and_send()
