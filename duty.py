@@ -33,9 +33,9 @@ def check_and_send():
 
     content = f"【测试消息】今天是 {today}，当前值日安排如下：\n\n"
     if is_bed_change:
-        content += f"🛏️ **寝室值日**：当前由 **{bed_person}** 负责。\n"
+        content += f"🛏️ **寝室值日**：由 **{bed_person}** 负责。\n"
     if is_toilet_change:
-        content += f"🚽 **厕所值日**：当前由 **{toilet_person}** 负责。\n"
+        content += f"🚽 **厕所值日**：由 **{toilet_person}** 负责。\n"
 
     url = "http://www.pushplus.plus/send"
     data = {
