@@ -1,0 +1,23 @@
+name: Daily Duty Reminder
+on:
+  schedule:
+    # GitHub 使用 UTC 时间，UTC 0:00 对应北京时间早上 8:00[reference:6]
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 允许你手动在网页上点击测试
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: pip install requests
+      - name: Run script
+        run: python duty.py
+        env:
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
