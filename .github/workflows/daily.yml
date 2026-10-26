@@ -1,7 +1,7 @@
 name: Daily Duty Reminder
 on:
   schedule:
-    - cron: '45 6 * * *'
+    - cron: '43 6 * * *'
   workflow_dispatch: 
 
 jobs:
