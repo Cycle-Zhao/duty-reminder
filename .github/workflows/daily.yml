@@ -1,8 +1,7 @@
 name: Daily Duty Reminder
 on:
   schedule:
-    # 北京时间 12:30 对应 UTC 时间 04:30
-    - cron: '27 5 * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch: 
 
 jobs:
