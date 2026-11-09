@@ -7,7 +7,7 @@ PUSHPLUS_TOKEN = os.environ.get("PUSHPLUS_TOKEN")
 PUSHPLUS_TOPIC = os.environ.get("PUSHPLUS_TOPIC")
 
 MEMBERS = ['谢江源', '陈锦慧', '俞天乐', '赵杰']
-START_DATE = datetime.date(2026, 10, 20)
+START_DATE = datetime.date(2026, 10, 22)
 
 def check_and_send():
     today = datetime.date.today() 
