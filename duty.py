@@ -7,22 +7,27 @@ PUSHPLUS_TOKEN = os.environ.get("PUSHPLUS_TOKEN")
 PUSHPLUS_TOPIC = os.environ.get("PUSHPLUS_TOPIC")
 
 MEMBERS = ['谢江源', '陈锦慧', '俞天乐', '赵杰']
-START_DATE = datetime.date(2026, 10, 22)
+BED_START_DATE = datetime.date(2026, 10, 22)    # 寝室起始日
+TOILET_START_DATE = datetime.date(2026, 10, 20) # 厕所起始日
 
 def check_and_send():
     today = datetime.date.today() 
-    days_diff = (today - START_DATE).days
     
-    if days_diff < 0:
-        print("还没到起始日期，跳过。")
+    # 分别计算距离起始日的天数
+    bed_days_diff = (today - BED_START_DATE).days
+    toilet_days_diff = (today - TOILET_START_DATE).days
+    
+    if bed_days_diff < 0 and toilet_days_diff < 0:
+        print("两个起始日期都还没到，跳过。")
         return
 
     # 判断当前是定时触发（schedule）还是手动触发（workflow_dispatch）
     event_name = os.environ.get("GITHUB_EVENT_NAME")
     is_manual_test = (event_name == "workflow_dispatch")
 
-    is_bed_change = (days_diff % 2 == 0)
-    is_toilet_change = (days_diff % 7 == 0)
+    # 判断是否轮换（注意要判断 days_diff >= 0，防止起始日前误判）
+    is_bed_change = (bed_days_diff >= 0) and (bed_days_diff % 2 == 0)
+    is_toilet_change = (toilet_days_diff >= 0) and (toilet_days_diff % 7 == 0)
 
     # 如果不是手动测试，且今天不是交接日，则正常跳过
     if not is_manual_test and not is_bed_change and not is_toilet_change:
@@ -30,8 +35,8 @@ def check_and_send():
         return
 
     # 计算当前轮到谁
-    bed_index = (days_diff // 2) % 4
-    toilet_index = (days_diff // 7) % 4
+    bed_index = (bed_days_diff // 2) % 4 if bed_days_diff >= 0 else 0
+    toilet_index = (toilet_days_diff // 7) % 4 if toilet_days_diff >= 0 else 0
     
     bed_person = MEMBERS[bed_index]
     toilet_person = MEMBERS[toilet_index]
@@ -73,7 +78,8 @@ def check_and_send():
     }
     
     try:
-        res = requests.post(url, json=data)
+        # 建议加上 timeout，防止网络卡死
+        res = requests.post(url, json=data, timeout=15)
         print("发送结果:", res.text)
     except Exception as e:
         print("发送失败:", e)
